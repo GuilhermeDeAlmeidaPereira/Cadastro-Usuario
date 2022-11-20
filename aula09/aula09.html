@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="stylesheet"
+        href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/5.0.0-beta1/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" />
+    <script src="script.js"></script>
+
+    <title>Exercício 06</title>
+</head>
+<body>
+    <div class="d-flex flex-column justify-content-center">
+        <h1 class="text-center">CADASTRO DE USUÁRIO</h1>
+        <br>
+        <form id="form">
+            <div class="d-flex flex-column justify-content-center align-items-center w-50">
+                <div class="">
+                    <label for="inputNome" class="form-label">Nome</label>
+                    <input type="text" id="inputNome" name="inputNome" class="form-control">
+                </div>
+                <div class="">
+                    <label for="inputEmail" class="form-label">Email</label>
+                    <input type="text" id="inputEmail" name="inputEmail" class="form-control">
+                </div>
+                <div class="">
+                    <label for="inputTelefone" class="form-label">Telefone</label>
+                    <input type="text" id="inputTelefone" name="inputTelefone" class="form-control">
+                </div>
+            </div>
+            <div>
+                <div class="d-flex flex-row mt-3 justify-content-center align-items-center w-50">
+                    <button type="button" class="btn btn-primary me-3" onclick="salvar()">Salvar</button>
+                    <button type="button" class="btn btn-success" onclick="salvarBackend()">Sincronizar</button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <br>
+    <div class="d-flex justify-content-center align-items-center mt-3">
+        <table class="table w-50 text-center">
+            <thead>
+                <tr>
+                    <th scope="col">Nome</th>
+                    <th scope="col">Email</th>
+                    <th scope="col">Telefone</th>
+                </tr>
+            </thead>
+            <tbody id="tbody"></tbody>
+        </table>    
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"
+        integrity="sha384-oBqDVmMz9ATKxIep9tiCxS/Z9fNfEXiDAYTujMAeBAsjFuCZSmKbSSUnQlmh/jp3" crossorigin="anonymous">
+        </script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.1/dist/js/bootstrap.min.js"
+        integrity="sha384-7VPbUDkoPSGFnVtYi0QogXtr74QeVeeIs99Qfg5YCF+TidwNdjvaKZX19NZ/e6oz" crossorigin="anonymous">
+        </script>
+    <script>
+        function Pessoa(nome, email, telefone) {
+    this.nome = nome;
+    this.email = email;
+    this.telefone = telefone;
+}
+
+urlAPI = "https://633cb60f74afaef1640d59f0.mockapi.io/Objects";
+nome = "inputNome";
+email = "inputEmail";
+telefone = "inputTelefone";
+
+var pessoas = new Array()
+
+function salvar() {
+
+    let nomeInput = document.getElementById(this.nome).value
+    let emailInput = document.getElementById(this.email).value
+    let telInput = document.getElementById(this.telefone).value
+
+    if(nomeInput === "" || emailInput === "" || telInput === "")
+    {
+        window.alert("Error ao salvar: " + "Preencha os campos vazios.");        
+        return;
+    }
+
+    let pessoa = new Pessoa(nomeInput, emailInput, telInput)
+
+    pessoas.push(pessoa)
+    atualizarTabela()
+}
+
+function atualizarTabela() {
+    tbody.innerHTML = ''
+    for (let i = 0; i < pessoas.length; i++) {
+        var tr = document.createElement('tr')
+        var td1 = document.createElement('td')
+        var td2 = document.createElement('td')
+        var td3 = document.createElement('td')
+
+        var txt1 = document.createTextNode(pessoas[i].nome)
+        var txt2 = document.createTextNode(pessoas[i].email)
+        var txt3 = document.createTextNode(pessoas[i].telefone)
+
+        td1.appendChild(txt1)
+        td2.appendChild(txt2)
+        td3.appendChild(txt3)
+        tr.appendChild(td1)
+        tr.appendChild(td2)
+        tr.appendChild(td3)
+
+        tbody.appendChild(tr)
+        document.getElementById(this.nome).value = '';
+        document.getElementById(this.email).value = '';
+        document.getElementById(this.telefone).value = '';
+    }
+}
+
+function limparTabela() {
+    var tbody = document.getElementById('tbody')
+    tbody.innerHTML = ''
+}
+
+function salvarBackend() {
+    if(this.pessoas.length <= 0)
+        window.alert("Error ao salvar: " + "Não há usuários salvos.");
+    else
+        this.pessoas.forEach(function (obj) {
+        fetch(this.urlAPI, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(obj)
+        }).then((response) => response.json())
+        .then(() => {
+            window.alert("Lista salva com sucesso!!")
+            limparTabela();
+        }).catch((error) => {
+            window.alert("Error ao salvar: " + error)
+        })
+    })
+}
+
+
+    </script>
+</body>
+
+</html>
